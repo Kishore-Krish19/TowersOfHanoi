@@ -1,0 +1,172 @@
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #0f172a;
+  color: white;
+}
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.app {
+  text-align: center;
+  padding: 20px;
+}
+
+.game {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 80px;
+
+  margin-top: 50px;
+}
+
+.tower {
+  width: 180px;
+  height: 340px;
+  border: 2px solid #94a3b8;
+  border-radius: 10px;
+
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+
+  padding-bottom: 12px;
+  position: relative;
+  box-sizing: border-box;
+}
+
+
+
+.tower:hover {
+  border-color: #38bdf8;
+}
+
+.disk {
+  height: 18px;
+  margin: 4px 0;
+  border-radius: 6px;
+  transition: all 0.25s ease-in-out;
+  max-width: 95%;
+}
+
+/* Color by size */
+.disk[data-size="1"] { background: #22c55e; }
+.disk[data-size="2"] { background: #3b82f6; }
+.disk[data-size="3"] { background: #6366f1; }
+.disk[data-size="4"] { background: #8b5cf6; }
+.disk[data-size="5"] { background: #ec4899; }
+.disk[data-size="6"] { background: #f97316; }
+.disk[data-size="7"] { background: #ef4444; }
+
+
+
+.selected {
+  border-color: #facc15;
+}
+
+.win {
+  color: #22c55e;
+  margin-top: 20px;
+}
+
+.restart {
+  margin-top: 30px;
+  padding: 10px 20px;
+  font-size: 16px;
+  background: #22c55e;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.restart:hover {
+  background: #16a34a;
+}
+
+.restart:active {
+  background: #15803d;
+}
+
+p {
+  font-size: 18px;
+  margin-top: 10px;
+}
+
+strong {
+  color: #fbbf24;
+}
+
+.disk {
+  height: 22px;
+  background: #6366f1;
+  border-radius: 6px;
+  margin: 4px 0;
+  transition: all 0.25s ease-in-out;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.controls {
+  margin-top: 35px;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.disk:nth-child(1) {
+  width: 40px;
+}
+
+.disk:nth-child(2) {
+  width: 60px;
+}
+
+.disk:nth-child(3) {
+  width: 80px;
+}
+
+.disk:nth-child(4) {
+  width: 100px;
+}
+
+.disk:nth-child(5) {
+  width: 120px;
+}
+
+.disk:nth-child(6) {
+  width: 140px;
+}
+
+.disk:nth-child(7) {
+  width: 160px;
+}
+.pole {
+  position: absolute;
+  bottom: 20px;
+  width: 6px;
+  height: 220px;
+  background: #94a3b8;
+  border-radius: 4px;
+}
+
+.base {
+  width: 120px;
+  height: 12px;
+  background: #64748b;
+  border-radius: 6px;
+  margin-top: 6px;
+}
+.base:hover {
+  background: #38bdf8;
+}
+.base:active {
+  background: #0ea5e9;
+}
