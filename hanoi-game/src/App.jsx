@@ -2,12 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import "./index.css";
 
 /* ---------------- Tower Component ---------------- */
-function Tower({ disks, onClick, selected }) {
+function Tower({ disks, onClick, selected, isGoal }) {
   return (
     <div
-      className={`tower ${selected ? "selected" : ""}`}
+      className={`tower ${selected ? "selected" : ""} ${isGoal ? "goal" : ""}`}
       onClick={onClick}
     >
+      {/* GOAL LABEL */}
+      {isGoal && <div className="goal-label">GOAL</div>}
+
       {/* Base */}
       <div className="base" />
 
@@ -29,14 +32,12 @@ function Tower({ disks, onClick, selected }) {
 
 /* ---------------- App Component ---------------- */
 export default function App() {
-  /* ---------- helpers ---------- */
   const generateTowers = (n) => [
     Array.from({ length: n }, (_, i) => n - i),
     [],
     []
   ];
 
-  /* ---------- state ---------- */
   const [diskCount, setDiskCount] = useState(3);
   const [towers, setTowers] = useState(generateTowers(3));
   const [selectedTower, setSelectedTower] = useState(null);
@@ -50,10 +51,8 @@ export default function App() {
   const cancelSolveRef = useRef(false);
   const firstRenderRef = useRef(true);
 
-  /* ---------- PURE move logic (NO side-effects) ---------- */
+  /* ---------- Pure move logic ---------- */
   const moveDisk = (from, to) => {
-    let didMove = false;
-
     setTowers((prev) => {
       if (from === to) return prev;
 
@@ -68,30 +67,24 @@ export default function App() {
       const copy = prev.map((t) => [...t]);
       copy[from].pop();
       copy[to].push(disk);
-
-      didMove = true;
       return copy;
     });
-
-    return didMove;
   };
 
-  /* ---------- click handling ---------- */
+  /* ---------- Click handling ---------- */
   const handleTowerClick = (index) => {
     if (hasWon || isSolving) return;
 
     if (selectedTower === null) {
       setSelectedTower(index);
     } else {
-      const moved = moveDisk(selectedTower, index);
-      if (moved) {
-        setHasStarted(true);
-      }
+      moveDisk(selectedTower, index);
       setSelectedTower(null);
+      setHasStarted(true);
     }
   };
 
-  /* ---------- move counter (based on REAL tower change) ---------- */
+  /* ---------- Move counter ---------- */
   useEffect(() => {
     if (firstRenderRef.current) {
       firstRenderRef.current = false;
@@ -100,14 +93,7 @@ export default function App() {
     setMoves((m) => m + 1);
   }, [towers]);
 
-  /* ---------- start timer after first move ---------- */
-  useEffect(() => {
-    if (moves > 0) {
-      setHasStarted(true);
-    }
-  }, [moves]);
-
-  /* ---------- timer ---------- */
+  /* ---------- Timer ---------- */
   useEffect(() => {
     if (!hasStarted || hasWon || isSolving) return;
 
@@ -118,14 +104,14 @@ export default function App() {
     return () => clearInterval(id);
   }, [hasStarted, hasWon, isSolving]);
 
-  /* ---------- win condition ---------- */
+  /* ---------- Win condition ---------- */
   useEffect(() => {
     if (towers[2].length === diskCount && moves > 0) {
       setHasWon(true);
     }
   }, [towers, diskCount, moves]);
 
-  /* ---------- auto solve ---------- */
+  /* ---------- Auto Solve ---------- */
   const generateMoves = (n, from, to, aux, res = []) => {
     if (n === 0) return res;
     generateMoves(n - 1, from, aux, to, res);
@@ -150,34 +136,30 @@ export default function App() {
     setIsSolving(false);
   };
 
-  /* ---------- restart ---------- */
+  /* ---------- Restart ---------- */
   const restartGame = () => {
     cancelSolveRef.current = true;
-
     setIsSolving(false);
     setHasStarted(false);
     setHasWon(false);
     setMoves(0);
     setSeconds(0);
     setSelectedTower(null);
-
     firstRenderRef.current = true;
     setTowers(generateTowers(diskCount));
   };
 
   const handleDiskChange = (e) => {
     const n = Number(e.target.value);
-
     cancelSolveRef.current = true;
-    setIsSolving(false);
-    setHasStarted(false);
-    setHasWon(false);
+
+    setDiskCount(n);
     setMoves(0);
     setSeconds(0);
+    setHasStarted(false);
+    setHasWon(false);
     setSelectedTower(null);
-
     firstRenderRef.current = true;
-    setDiskCount(n);
     setTowers(generateTowers(n));
   };
 
@@ -188,12 +170,10 @@ export default function App() {
         <h1>Tower of Hanoi</h1>
 
         <label>
-          Disks:{" "}
+          Disks:
           <select value={diskCount} onChange={handleDiskChange}>
             {[3, 4, 5, 6, 7].map((n) => (
-              <option key={n} value={n}>
-                {n}
-              </option>
+              <option key={n} value={n}>{n}</option>
             ))}
           </select>
         </label>
@@ -203,36 +183,37 @@ export default function App() {
           <strong>{Math.pow(2, diskCount) - 1}</strong>
         </p>
 
-        <p>
-          ⏱ Time: <strong>{seconds}s</strong>
-        </p>
+        <p>⏱ Time: <strong>{seconds}s</strong></p>
 
         {hasWon && <h2 className="win">🎉 You Win!</h2>}
       </div>
 
-      <div className="game">
-        {towers.map((tower, i) => (
-          <Tower
-            key={i}
-            disks={tower}
-            selected={selectedTower === i}
-            onClick={() => handleTowerClick(i)}
-          />
-        ))}
-      </div>
+      <div className="game-card">
+        <div className="game">
+          {towers.map((tower, i) => (
+            <Tower
+              key={i}
+              disks={tower}
+              selected={selectedTower === i}
+              isGoal={i === 2}
+              onClick={() => handleTowerClick(i)}
+            />
+          ))}
+        </div>
 
-      <div className="controls">
-        <button className="restart" onClick={restartGame}>
-          Restart
-        </button>
+        <div className="controls">
+          <button className="restart" onClick={restartGame}>
+            Restart
+          </button>
 
-        <button
-          className="restart"
-          onClick={autoSolve}
-          disabled={isSolving}
-        >
-          {isSolving ? "Solving..." : "Auto Solve"}
-        </button>
+          <button
+            className="restart"
+            onClick={autoSolve}
+            disabled={isSolving}
+          >
+            {isSolving ? "Solving..." : "Auto Solve"}
+          </button>
+        </div>
       </div>
     </div>
   );
