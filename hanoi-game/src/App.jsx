@@ -8,13 +8,10 @@ function Tower({ disks, onClick, selected, isGoal }) {
       className={`tower ${selected ? "selected" : ""} ${isGoal ? "goal" : ""}`}
       onClick={onClick}
     >
-      {/* GOAL LABEL */}
       {isGoal && <div className="goal-label">GOAL</div>}
 
-      {/* Base */}
       <div className="base" />
 
-      {/* Disks */}
       {disks.map((disk) => (
         <div
           key={disk}
@@ -24,7 +21,6 @@ function Tower({ disks, onClick, selected, isGoal }) {
         />
       ))}
 
-      {/* Pole */}
       <div className="pole" />
     </div>
   );
@@ -33,20 +29,32 @@ function Tower({ disks, onClick, selected, isGoal }) {
 /* ---------------- App Component ---------------- */
 export default function App() {
 
-  /*  ---------- Audio Setup ---------- */
-  const [volume, setVolume] = useState(0.8); // default 80%
+  /* ---------- AUDIO ---------- */
+  const [volume, setVolume] = useState(0.8);
   const [muted, setMuted] = useState(false);
-  const moveSound = new Audio("/sounds/move.mp3");
-  const winSound = new Audio("/sounds/win.mp3");
-  const restartSound = new Audio("/sounds/restart.mp3");
-  useEffect(() => {
-  const vol = muted ? 0 : volume;
-  moveSound.volume = vol;
-  winSound.volume = vol;
-  restartSound.volume = vol;
-}, [volume, muted]);
 
-  /* ---------- Game State ---------- */
+  const moveSoundRef = useRef(null);
+  const winSoundRef = useRef(null);
+  const restartSoundRef = useRef(null);
+
+  useEffect(() => {
+    moveSoundRef.current = new Audio("/sounds/move.mp3");
+    winSoundRef.current = new Audio("/sounds/win.mp3");
+    restartSoundRef.current = new Audio("/sounds/restart.mp3");
+
+    moveSoundRef.current.preload = "auto";
+    winSoundRef.current.preload = "auto";
+    restartSoundRef.current.preload = "auto";
+  }, []);
+
+  useEffect(() => {
+    const vol = muted ? 0 : volume;
+    if (moveSoundRef.current) moveSoundRef.current.volume = vol;
+    if (winSoundRef.current) winSoundRef.current.volume = vol;
+    if (restartSoundRef.current) restartSoundRef.current.volume = vol;
+  }, [volume, muted]);
+
+  /* ---------- GAME STATE ---------- */
   const generateTowers = (n) => [
     Array.from({ length: n }, (_, i) => n - i),
     [],
@@ -55,7 +63,6 @@ export default function App() {
 
   const [diskCount, setDiskCount] = useState(3);
   const [towers, setTowers] = useState(() => generateTowers(3));
-
   const [selectedTower, setSelectedTower] = useState(null);
 
   const [moves, setMoves] = useState(0);
@@ -65,11 +72,9 @@ export default function App() {
   const [isSolving, setIsSolving] = useState(false);
 
   const [theme, setTheme] = useState("dark");
-
   const cancelSolveRef = useRef(false);
-  const firstRenderRef = useRef(true);
 
-  /* ---------- Pure move logic ---------- */
+  /* ---------- MOVE LOGIC ---------- */
   const moveDisk = (from, to) => {
     setTowers((prev) => {
       if (from === to) return prev;
@@ -86,15 +91,18 @@ export default function App() {
       copy[from].pop();
       copy[to].push(disk);
 
-      //  MOVE SOUND
-      moveSound.currentTime = 0;
-      moveSound.play();
+      // 🔊 MOVE SOUND (no missed moves)
+      if (moveSoundRef.current) {
+        const sound = moveSoundRef.current.cloneNode();
+        sound.volume = muted ? 0 : volume;
+        sound.play();
+      }
 
       return copy;
     });
   };
 
-  /* ---------- Click handling ---------- */
+  /* ---------- CLICK ---------- */
   const handleTowerClick = (index) => {
     if (hasWon || isSolving) return;
 
@@ -107,16 +115,13 @@ export default function App() {
     }
   };
 
-
-  /* ---------- Move counter ---------- */
+  /* ---------- MOVE COUNTER ---------- */
   useEffect(() => {
     if (!hasStarted) return;
-
     setMoves((m) => m + 1);
   }, [towers]);
 
-
-  /* ---------- Timer ---------- */
+  /* ---------- TIMER ---------- */
   useEffect(() => {
     if (!hasStarted || hasWon || isSolving) return;
 
@@ -127,16 +132,15 @@ export default function App() {
     return () => clearInterval(id);
   }, [hasStarted, hasWon, isSolving]);
 
-  /* ---------- Win condition ---------- */
+  /* ---------- WIN ---------- */
   useEffect(() => {
     if (towers[2].length === diskCount && moves > 0) {
       setHasWon(true);
-      winSound.currentTime = 0;
-      winSound.play();
+      winSoundRef.current?.play();
     }
   }, [towers, diskCount, moves]);
 
-  /* ---------- Auto Solve ---------- */
+  /* ---------- AUTO SOLVE ---------- */
   const generateMoves = (n, from, to, aux, res = []) => {
     if (n === 0) return res;
     generateMoves(n - 1, from, aux, to, res);
@@ -154,17 +158,16 @@ export default function App() {
 
     for (const [from, to] of list) {
       if (cancelSolveRef.current) break;
-      await new Promise((r) => setTimeout(r, 400));
+      await new Promise((r) => setTimeout(r, 600));
       moveDisk(from, to);
     }
 
     setIsSolving(false);
   };
 
-  /* ---------- Restart ---------- */
+  /* ---------- RESTART ---------- */
   const restartGame = () => {
-    cancelSolveRef.current = true;
-    restartSound.play();
+    restartSoundRef.current?.play();
 
     setIsSolving(false);
     setHasStarted(false);
@@ -172,10 +175,10 @@ export default function App() {
     setMoves(0);
     setSeconds(0);
     setSelectedTower(null);
-    firstRenderRef.current = true;
     setTowers(generateTowers(diskCount));
   };
 
+  /* ---------- DISK CHANGE ---------- */
   const handleDiskChange = (e) => {
     const n = Number(e.target.value);
     cancelSolveRef.current = true;
@@ -186,61 +189,44 @@ export default function App() {
     setHasStarted(false);
     setHasWon(false);
     setSelectedTower(null);
-    firstRenderRef.current = true;
     setTowers(generateTowers(n));
   };
 
   /* ---------- UI ---------- */
   return (
     <div className={`app ${theme}`}>
+
+      {/* TOP CONTROLS */}
       <div className="top-controls">
-  {/* Volume */}
-  <div className="volume-control">
-    <span>🔈</span>
-    <input
-      type="range"
-      min="0"
-      max="1"
-      step="0.05"
-      value={volume}
-      onChange={(e) => setVolume(Number(e.target.value))}
-      disabled={muted}
-    />
-  </div>
+        <div className="volume-control">
+          <span>🔈</span>
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.05"
+            value={volume}
+            onChange={(e) => setVolume(Number(e.target.value))}
+          />
+        </div>
 
-  {/* Mute */}
-  <button
-    className="icon-btn"
-    onClick={() => setMuted((m) => !m)}
-  >
-    {muted ? "🔇" : "🔊"}
-  </button>
+        <button className="icon-btn" onClick={() => setMuted((m) => !m)}>
+          {muted ? "🔇" : "🔊"}
+        </button>
 
-  {/* Theme Toggle */}
-  <button
-    className="icon-btn"
-    onClick={() =>
-      setTheme(theme === "dark" ? "light" : "dark")
-    }
-  >
-    {theme === "dark" ? "🌞" : "🌙"}
-  </button>
-</div>
-
-      <div className="header">
-        {/* <button
-          className="theme-toggle"
-          onClick={() =>
-            setTheme(theme === "dark" ? "light" : "dark")
-          }
+        <button
+          className="icon-btn"
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
         >
-          {theme === "dark" ? "🌞 Light Mode" : "🌙 Dark Mode"}
-        </button> */}
+          {theme === "dark" ? "🌞" : "🌙"}
+        </button>
+      </div>
 
+      {/* HEADER */}
+      <div className="header">
         <h1>Tower of Hanoi</h1>
 
-
-        <label>
+        <label className="disk-select">
           Disks:
           <select value={diskCount} onChange={handleDiskChange}>
             {[3, 4, 5, 6, 7].map((n) => (
@@ -249,19 +235,18 @@ export default function App() {
           </select>
         </label>
 
-        <p>
+        <p className="stats">
           Moves: <strong>{moves}</strong> | Minimum:{" "}
           <strong>{Math.pow(2, diskCount) - 1}</strong>
         </p>
 
-        <p>⏱ Time: <strong>{seconds}s</strong></p>
+        <p className="time">
+          ⏱ Time: <strong>{seconds}s</strong>
+        </p>
 
-        {hasWon && <h2 className="win">🎉 Congragulations You Won!</h2>}
+        {hasWon && <h2 className="win">🎉 Congratulations You Won!</h2>}
         <div className="controls">
-          <button className="restart" onClick={restartGame}>
-            Restart
-          </button>
-
+          <button className="restart" onClick={restartGame}>Restart</button>
           <button
             className="restart"
             onClick={autoSolve}
@@ -272,6 +257,7 @@ export default function App() {
         </div>
       </div>
 
+      {/* GAME */}
       <div className="game-card">
         <div className="game">
           {towers.map((tower, i) => (
