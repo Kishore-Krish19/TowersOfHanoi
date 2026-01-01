@@ -230,7 +230,7 @@ body {
 /* ============ TOP CONTROLS ============ */
 .top-controls {
   display: flex;
-  justify-content: center;
+  justify-content: left;
   align-items: center;
   gap: 18px;
   margin-bottom: 12px;

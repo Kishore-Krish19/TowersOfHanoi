@@ -91,7 +91,7 @@ export default function App() {
       copy[from].pop();
       copy[to].push(disk);
 
-      // 🔊 MOVE SOUND (no missed moves)
+      //  MOVE SOUND //
       if (moveSoundRef.current) {
         const sound = moveSoundRef.current.cloneNode();
         sound.volume = muted ? 0 : volume;
