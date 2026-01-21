@@ -15,12 +15,23 @@ body {
 }
 
 /* ============ APP ============ */
-.app {
+/* .app {
   width: 100%;
   max-width: 1100px;
   padding: 20px;
   text-align: center;
+} */
+ .app {
+  width: 100%;
+  max-width: 1100px;
+  padding: 20px;
+  text-align: center;
+
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
+
 
 /* ============ HEADER ============ */
 .header {
@@ -91,6 +102,7 @@ body {
   padding: 30px;
   backdrop-filter: blur(12px);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  flex: 1;
 }
 
 /* ============ GAME ============ */
@@ -301,4 +313,60 @@ body {
   .restart {
     width: 160px;
   }
+}
+/* ============ FOOTER ============ */
+.footer {
+  margin-top: 30px;
+  padding: 14px 10px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+
+  font-size: 14px;
+  color: #cbd5f5;
+
+  background: linear-gradient(
+    to bottom,
+    rgba(15, 23, 42, 0.8),
+    rgba(2, 6, 23, 0.95)
+  );
+
+  border-top: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 10px;
+}
+
+.footer-divider {
+  color: #475569;
+}
+
+.footer-icon {
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.footer-dev {
+  display: flex;
+  align-items: center;
+}
+
+.footer-name {
+  margin-left: 4px;
+  color: #22d3ee;
+  font-weight: 500;
+}
+
+.footer-link {
+  display: flex;
+  align-items: center;
+  color: #22d3ee;
+  text-decoration: none;
+}
+
+.footer-link:hover {
+  text-decoration: underline;
+}
+.footer-link:hover .footer-name {
+  color: #06b6d4;
 }

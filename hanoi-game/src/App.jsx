@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import "./index.css";
+import Footer from "./Footer";
 
 /* ---------------- Tower Component ---------------- */
 function Tower({ disks, onClick, selected, isGoal }) {
@@ -272,6 +273,8 @@ export default function App() {
         </div>
 
       </div>
+      {/* FOOTER */}
+      <Footer />
     </div>
   );
 }
