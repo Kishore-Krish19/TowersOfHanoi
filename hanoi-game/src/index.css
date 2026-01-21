@@ -56,8 +56,8 @@ body {
   align-items: center;
   gap: 5px;
   font-size: 1.1rem;
+  background-color: inherit;
 }
-
 /* 
 .disk-select select {
   font-size: 1rem;
@@ -66,18 +66,18 @@ body {
   color: #ffffff;
   } */
 .disk-select select {
-  color: inherit;
+  color: white;
   border-radius: 8px;
   background: transparent;
   border: 1px solid currentColor;
   margin-left: 6px;
   padding: 5px 6px;
   border-radius: 8px;
-  background-color: #070e2e;
+  background-color:  #0a162f;
 }
 
 .disk-select select:hover {
-  background-color: #0a162f;
+  /* background-color: #0a162f; */
   transform: translateY(-0.5px);
 
 }
