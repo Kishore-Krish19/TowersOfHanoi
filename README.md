@@ -164,10 +164,10 @@ function solveHanoi(n, source, destination, auxiliary) {
 
 ## 📜 Scripts
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
+- `npm run dev` - Start development server with hot reload
+- `npm run build` - Build optimized production bundle
+- `npm run preview` - Preview production build locally
+- `npm run lint` - Check code quality and style with ESLint
 
 ## 🤝 Contributing
 
@@ -189,9 +189,14 @@ This project is open source and available under the [MIT License](LICENSE).
 - Built with modern web technologies for educational purposes
 - Sound effects enhance the gaming experience
 
-## 📸 Screenshots
+## 📸 Demo
 
-*Coming soon - Screenshots will be added to showcase the game interface*
+Try the game yourself by following the installation instructions above! The game features:
+- A sleek, modern interface with smooth animations
+- Visual feedback for disk movements
+- Real-time move counter and timer
+- Dark/Light theme toggle
+- Interactive sound effects
 
 ---
 
