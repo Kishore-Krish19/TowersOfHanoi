@@ -4,6 +4,8 @@ An interactive and visually appealing implementation of the classic **Tower of H
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+Live : https://towers-of-hanoi-game.vercel.app/
+
 ## 📖 About the Tower of Hanoi
 
 The Tower of Hanoi is a mathematical puzzle invented by French mathematician Édouard Lucas in 1883. The puzzle consists of three rods and a number of disks of different sizes, which can slide onto any rod. The puzzle starts with the disks in a neat stack in ascending order of size on one rod, with the smallest disk at the top.
