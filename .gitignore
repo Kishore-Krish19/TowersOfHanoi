@@ -11,6 +11,15 @@ node_modules
 dist
 dist-ssr
 *.local
+!package.json
+!**/package.json
+!package-lock.json
+!pnpm-lock.yaml
+# Allow other important config JSON files
+!tsconfig.json
+!**/tsconfig.json
+!.eslintrc.json
+!**/.eslintrc.json
 
 # Editor directories and files
 .vscode/*
